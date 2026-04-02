@@ -7,7 +7,7 @@ name = "asyncmy"
 readme = "README.md"
 requires-python = ">=3.9"
 dependencies = []
-version = "0.2.12"
+dynamic = ["version"]
 
 [project.urls]
 documentation = "https://github.com/long2ice/asyncmy"
@@ -19,6 +19,17 @@ include = ["CHANGELOG.md", "LICENSE", "README.md"]
 packages = [
     { include = "asyncmy" },
 ]
+version = "0.0.0"
+
+[tool.poetry.requires-plugins]
+poetry-dynamic-versioning = { version = ">=1.0.0,<2.0.0", extras = ["plugin"] }
+
+[tool.poetry-dynamic-versioning]
+enable = true
+
+[tool.poetry-dynamic-versioning.from-file]
+source = "asyncmy/version.py"
+pattern = '__VERSION__ = "(.+)"'
 
 [dependency-groups]
 dev = [
@@ -41,13 +52,18 @@ test = [
     "uvloop; sys_platform != 'win32' and implementation_name == 'cpython'",
 ]
 
-[tool.poetry.build]
-generate-setup-file = true
-script = "build.py"
+[tool.pdm.version]
+path = "asyncmy/version.py"
+pattern = '__VERSION__ = "([^"]+)"'
+
+[tool.pdm.build]
+run-setuptools = true
+custom-hook = "build.py"
+include = ["CHANGELOG.md", "LICENSE", "README.md"]
 
 [build-system]
-build-backend = "poetry.core.masonry.api"
-requires = ["poetry-core", "setuptools", "cython"]
+build-backend = "pdm.backend"
+requires = ["pdm-backend", "setuptools", "cython"]
 
 [tool.pytest.ini_options]
 asyncio_mode = 'auto'
